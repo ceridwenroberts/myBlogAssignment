@@ -1,6 +1,7 @@
 import styles from "./root-layout.module.css";
 import Sidebar from "../sidebar";
 import classNames from "classnames";
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
 
 import { Inter } from "next/font/google";
 
