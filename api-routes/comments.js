@@ -6,6 +6,6 @@ export const addComment = () => {
   //Handle add comment here
 };
 
-export const removeComment = () => {
-  //Handle remove comment here
+export const deleteComment = () => {
+  //Handle delete comment here
 };

@@ -14,31 +14,20 @@ import { useRouter } from 'next/router'
 const LoginPage = () => {
   const supabaseClient = useSupabaseClient()
   const user = useUser();
-  const router = useRouter();
   // console.log(user);
+  const router = useRouter(); //hanterar navigering i projekt
+  // console.log("router", router);
 
   useEffect(() => {
+    //om inloggad, skicka till den här URL:en (med router.push())
     if (user) {
       router.push("/");
     }
   }, [user, router])
 
-
-  // const [data, setData] = useState()
-
-  // useEffect(() => {
-  //   async function loadData() {
-  //     const { data } = await supabaseClient.from('test').select('*')
-  //     setData(data)
-  //   }
-  //   // Only run query once user is logged in.
-  //   if (user) loadData()
-  // }, [user])
-
-  if (!user)
     return (
       <Auth
-        redirectTo="http://localhost:3000/" //kopplad till providers, inte "denhär", anv useRouter
+        redirectTo="http://localhost:3000/" //kopplad till providers, inte "denhär". Vi kommer inte till den här adressen vid email inloggning.  anv useRouter
         appearance={{ theme: ThemeSupa }}
         supabaseClient={supabaseClient} //från _app.tsx
         providers={['google', 'github']}
@@ -46,15 +35,7 @@ const LoginPage = () => {
       />
     )
 
-  // return (
-  //   <>
-  //     <button onClick={() => supabaseClient.auth.signOut()}>Sign out</button>
-  //     <p>user:</p>
-  //     <pre>{JSON.stringify(user, null, 2)}</pre>
-  //     {/* <p>client-side data fetching with RLS</p>
-  //     <pre>{JSON.stringify(data, null, 2)}</pre> */}
-  //   </>
-  // )
+
 }
 
 export default LoginPage

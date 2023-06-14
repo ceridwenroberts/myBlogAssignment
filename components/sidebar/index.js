@@ -9,11 +9,14 @@ export default function Navbar() {
   const router = useRouter();
   const supabaseClient = useSupabaseClient();
   const user = useUser();
+  // console.log("user", user);
 
   let pathname = usePathname() || "/";
   if (pathname.includes("/blog/")) {
     pathname = "/blog";
   }
+
+  //on create confirm from email, redirect to login, not home. How?
 
   const navItems = {
     "/": {

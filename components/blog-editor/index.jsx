@@ -6,6 +6,7 @@ import Input from "@components/input";
 import Label from "@components/label";
 import Heading from "@components/heading";
 import ImageUpload from "@components/upload-image";
+import { useRouter } from "next/router";
 
 export default function BlogEditor({
   content = "",
@@ -15,6 +16,7 @@ export default function BlogEditor({
   onSubmit,
   buttonText = "Submit",
 }) {
+  const router = useRouter;
   const [image, setImage] = useState(src);
   const [editorContent, setEditorJsonContent] = useState(content);
   const [titleInput, setTitleInput] = useState(title);
@@ -29,6 +31,7 @@ export default function BlogEditor({
     onSubmit({ editorContent, titleInput, image });
   };
 
+ 
   return (
     <>
       <Heading>{heading}</Heading>
