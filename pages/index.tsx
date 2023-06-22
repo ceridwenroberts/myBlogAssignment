@@ -6,6 +6,9 @@ import { useUser, useSupabaseClient } from '@supabase/auth-helpers-react';
 //   return <Heading>Home</Heading>
 // }
 
+
+
+
 export default function Home() {
   const user = useUser()
   const supabaseClient = useSupabaseClient()

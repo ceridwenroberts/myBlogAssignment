@@ -45,7 +45,6 @@ export const addPost = async (_, { arg: newPost }) => {
     .insert({ ...newPost, image })
     .single()
     .select();
-
   // console.log( "post status", { status }, { error } );
   return { data, error, status };
 };

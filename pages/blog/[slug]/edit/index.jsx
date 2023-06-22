@@ -22,8 +22,10 @@ export default function EditBlogPost() {
     isLoading,
   } = useSWR(slug ? `${postsCacheKey}${slug}` : null, () => getPost({ slug }));
 
+  console.log({post});
+
   const { trigger: editPostTrigger } = useSWRMutation(
-    `${postsCacheKey}${slug}`,
+    `${postsCacheKey}${slug}/edit`,
     editPost
   );
 
@@ -46,6 +48,8 @@ export default function EditBlogPost() {
     router.push(`/blog/${updatedSlug}`);
   }
 };
+
+console.log({post})
 
   if (isLoading) {
     return "...loading";
@@ -86,7 +90,6 @@ export const getServerSideProps = async (ctx) => {
     console.log( {data});
   
     
-
     // Check if the user is authenticated
   if (!session || !session.user || !session.user.id) {
     return {
@@ -100,7 +103,7 @@ export const getServerSideProps = async (ctx) => {
 console.log("session:", { session });
 // console.log("isAuthor", isAuthor);
 
-const isAuthor = data.user_id === session?.user.id;
+const isAuthor = data.user_id === session.user.id;
 
   if (!isAuthor) {
     return {

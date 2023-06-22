@@ -15,13 +15,11 @@ import { useUser, useSupabaseClient } from "@supabase/auth-helpers-react";
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 
 
-
 export default function BlogPost() {
 
   const router = useRouter();
   const { slug } = router.query;
   const user = useUser();
-  // const supabaseClient = useSupabaseClient();
 
   const { trigger: deletePostTrigger } = useSWRMutation(postsCacheKey, deletePost);
 
@@ -34,6 +32,9 @@ export default function BlogPost() {
   console.log("postsData:", post);
 
 
+    const isAuthor = post?.user_id === user?.id;
+      if (isAuthor) console.log("isAuthor true");
+  
   const handleEditPost = () => {
     console.log("slug", slug);
     router.push(`/blog/${slug}/edit`);
@@ -44,9 +45,6 @@ export default function BlogPost() {
     await deletePostTrigger({
       id: post.id,
     })
-    // const {
-    //    data: { data = [] } = {}, 
-    //    error } = useSWRMutation( slug ? `${postsCacheKey}${slug}` : null, () => deletePost({ slug }));
     console.log("handleDeletePost (in [slug]/index)", { id: post.id, slug });
 
     if (!post) {
@@ -58,24 +56,11 @@ export default function BlogPost() {
         },
       }
     }
-
-
-
-    // };
     router.push(`/blog`);
-
   };
-
-
-  //------------------------
 
 console.log("author", post.author);
 
-// const { props, session, isAuthor } = getServerSideProps();
-
-// const { post, error } = await supabase.auth.getSession()
-
-// const session = supabase.auth.session()
   return (
     <>
      {post && ( <section className={styles.container}>
@@ -89,20 +74,19 @@ console.log("author", post.author);
         {/*set author in supabase*/}
         <span className={styles.author}>Author: {post.author}</span>
 
-        {/* The Delete & Edit part should only be showed if you are authenticated and you are the author */}
- 
-        <div className={styles.buttonContainer}>
+      { isAuthor ?  <div className={styles.buttonContainer}>
           <Button onClick={handleDeletePost}>Delete</Button>
           <Button onClick={handleEditPost}>Edit</Button>
-        </div>
-        {/* ): <p>Login to edit</p>} */}
+        </div> : <p>Login to edit</p> 
+        }
       </section>)}
 
       <Comments postId={post.id} />
 
       {/* This component should only be displayed if a user is authenticated */}
+    
       <AddComment postId={post.id} />
-    </>
+      </>
   );
 }
 

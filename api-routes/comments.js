@@ -4,22 +4,22 @@ import { useRouter } from "next/router";
 
 export const commentsCacheKey = "api/comments";
 
+
+//ADD REPLY FORM!
+
 export const getComments = async (postId) => {
   const { data, error, status } = await supabase
     .from('comments')
-    .select()
+    .select('*, post_id (*)')
     .eq('post_id', postId);
-  // if(data) {
-  //   console.log("commentsdata:", data);
-  // }
+
   // if (error) {
   //   console.error(error);
   //   return [];
   // }
+  console.log({data});
   return { data, error, status };
 }
-
-  //Handle get all comments
 
 
 export const addComment = async ( _, { arg: newComment }) => {
@@ -32,6 +32,7 @@ export const addComment = async ( _, { arg: newComment }) => {
 
   return { data, error, status }
 };
+
 
 export const deleteComment = async (_, { arg: id }) => {
   const { data, error, status } = await supabase

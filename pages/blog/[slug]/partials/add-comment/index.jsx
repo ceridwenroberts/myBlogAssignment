@@ -10,17 +10,17 @@ import {getStaticProps} from "pages/blog/[slug]/edit/index.jsx"
 
 export default function AddComment({ postId }) {
   const formRef = useRef(); // create a reference
-
+  
   const { trigger: addCommentTrigger, isMutating }  = useSWRMutation(commentsCacheKey, addComment, {
     onError: (error) => {
       console.log(error);
     }
   }
-  )
+  );
 
   const handleOnSubmit = async (event) => {
     event.preventDefault();
-    // Alternative way to get the form data
+
     const formData = new FormData(event.target);
     const { author, comment } = Object.fromEntries(formData);
     const newComment = {
@@ -32,6 +32,8 @@ export default function AddComment({ postId }) {
     console.log({ author, comment, postId });
 
     const { status, error } = await addCommentTrigger(newComment);
+
+    console.log({status, error});
 
     // Reset the form after submission?
     formRef.current.reset();
