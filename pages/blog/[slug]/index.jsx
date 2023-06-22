@@ -5,107 +5,265 @@ import AddComment from "./partials/add-comment";
 import Button from "@components/button";
 import Heading from "@components/heading";
 import BlogImageBanner from "@components/blog-image-banner";
+
+
+
 import { getPost, deletePost, editPost, postsCacheKey } from "../../../api-routes/posts";
 import useSWR from 'swr';
 import useSWRMutation from "swr/mutation";
+import { useUser, useSupabaseClient } from "@supabase/auth-helpers-react";
+import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
+
+
 
 export default function BlogPost() {
+
   const router = useRouter();
-  /* Use this slug to fetch the post from the database */
   const { slug } = router.query;
+  const user = useUser();
+  // const supabaseClient = useSupabaseClient();
 
   const { trigger: deletePostTrigger } = useSWRMutation(postsCacheKey, deletePost);
 
-
-// WHYYYY DOESN'T THIS WORKKKKK???
-// const { data: { post = [] } = {}, error } = useSWR(slug ? postsCacheKey : null, () => getPost({ slug }));
-
-  const { 
-    data: { data = [] } = {}, 
-    error } = useSWR(slug ? `${postsCacheKey}${slug}` : null, () => getPost({ slug }));
+    const {
+      data: { data: post = {} } = {},
+      error
+    } = useSWR(slug ? `${postsCacheKey}${slug}` : null, () => getPost({ slug }));
   // console.log("slugBlog", { data, error });
   // console.log({ slug });
+  console.log("postsData:", post);
 
 
-  // const { trigger: deletePostTrigger } = useSWRMutation(`${postsCacheKey}${slug}`, deletePost( {
-
-  // }); //SWRMutation
-
-
-  // //**EDIT
   const handleEditPost = () => {
     console.log("slug", slug);
     router.push(`/blog/${slug}/edit`);
   };
 
 
-
-//**DEL
-
-
-
-  
-//------------------------
-
-//**DELETE 
-// console.log({data});
-  const handleDeletePost = async ({ }) => {
-    await deletePostTrigger( {
-      id: data.id,
+  const handleDeletePost = async () => {
+    await deletePostTrigger({
+      id: post.id,
     })
     // const {
     //    data: { data = [] } = {}, 
     //    error } = useSWRMutation( slug ? `${postsCacheKey}${slug}` : null, () => deletePost({ slug }));
-    console.log("handleDeletePost (in [slug]/index)", { id: data.id, slug });
-    if (!data) {
-      console.log("there is data", data);
-      // return {
-      //   redirect: {
-      //     destination: '/hello-nextjs',
-      //     permanent: false,
-      //   },
-      // }
+    console.log("handleDeletePost (in [slug]/index)", { id: post.id, slug });
+
+    if (!post) {
+      console.log("there is no post", post);
+      return {
+        redirect: {
+          destination: '/blog',
+          permanent: false,
+        },
+      }
     }
 
 
-     
+
     // };
     router.push(`/blog`);
-   
+
   };
 
 
-//------------------------
+  //------------------------
 
+console.log("author", post.author);
 
-  
+// const { props, session, isAuthor } = getServerSideProps();
+
+// const { post, error } = await supabase.auth.getSession()
+
+// const session = supabase.auth.session()
   return (
     <>
-      <section className={styles.container}>
-        <Heading>{data.title}</Heading>
-        {data?.image && <BlogImageBanner src={data.image} alt={data.title} />}
+     {post && ( <section className={styles.container}>
+        <Heading>{post.title}</Heading>
+        {post?.image && <BlogImageBanner src={post.image} alt={post.title} />}
         <div className={styles.dateContainer}>
-          <time className={styles.date}>{data.createdAt}</time>
+          <time className={styles.date}>{post.createdAt}</time>
           <div className={styles.border} />
         </div>
-        <div dangerouslySetInnerHTML={{ __html: data.body }} />
-        <span className={styles.author}>Author: {data.author}</span>
+        <div dangerouslySetInnerHTML={{ __html: post.body }} />
+        {/*set author in supabase*/}
+        <span className={styles.author}>Author: {post.author}</span>
 
         {/* The Delete & Edit part should only be showed if you are authenticated and you are the author */}
+ 
         <div className={styles.buttonContainer}>
           <Button onClick={handleDeletePost}>Delete</Button>
           <Button onClick={handleEditPost}>Edit</Button>
         </div>
-      </section>
+        {/* ): <p>Login to edit</p>} */}
+      </section>)}
 
-      <Comments postId={data.id} />
+      <Comments postId={post.id} />
 
       {/* This component should only be displayed if a user is authenticated */}
-      {/* <AddComment postId={post.id} /> */}
+      <AddComment postId={post.id} />
     </>
   );
 }
 
+
+
+// export const getServerSideProps = async (ctx) => {
+//   const supabase = createPagesServerClient(ctx);
+//   const { slug } = ctx.params;
+
+//   const {
+//     data: { session },
+//   } = await supabase.auth.getSession();
+
+//   // Check if the user is authenticated
+//   if (!session || !session.user || !session.user.id) {
+//     return {
+//       redirect: {
+//         destination: "/login",
+//         permanent: false,
+//       },
+//     };
+//   }
+
+//   const { data } = await supabase
+//     .from("posts")
+//     .select()
+//     .single()
+//     .eq("slug", slug);
+
+//   const isAuthor = data.user_id === (session.user ? session.user.id : null); // Check if session.user exists before accessing id
+
+//   if (!isAuthor) {
+//     return {
+//       redirect: {
+//         destination: `/blog/${slug}`,
+//         permanent: true,
+//       },
+//     };
+//   }
+
+//   return {
+//     props: {
+//       data,
+//       isAuthor,
+//     },
+//   };
+// };
+
+
+// export const getServerSideProps = async (ctx) => {
+//   const supabase = createPagesServerClient(ctx);
+//   const { slug } = ctx.params;
+
+//   const {
+//     data: { session },
+//   } = await supabase.auth.getSession();
+
+//   const { data } = await supabase
+//     .from("posts")
+//     .select()
+//     .single()
+//     .eq("slug", slug);
+
+//   const isAuthor = data.user_id === session.user.id;
+  
+//   // Check if the user is authenticated
+//   if (!session || !session.user || !session.user.id) {
+//     return {
+//       redirect: {
+//         destination: "/login",
+//         permanent: false,
+//       },
+//     };
+//   }
+
+//   if (!isAuthor) {
+//     return {
+//       redirect: {
+//         destination: `/blog/${slug}`,
+//         permanent: true,
+//       },
+//     };
+//   }
+
+//   return {
+//     props: {
+//       data,
+//       isAuthor,
+//     },
+//   };
+// };
+
+
+
+// export const getServerSideProps = async (ctx) => {
+//   const supabase = createPagesServerClient(ctx);
+//   const { slug } = ctx.params;
+
+//   const {
+//     data: { session },
+//   } = await supabase.auth.getSession();
+//   console.log("session", session);
+
+  
+
+//   const { data } = await supabase
+//     .from("posts")
+//     .select()
+//     .single()
+//     .eq("slug", slug);
+
+
+//   const isAuthor = data.user_id === session.user.id;
+  
+//       // Check if the user is authenticated
+//   if (!session || !session.user || !session.user.id) {
+//     return {
+//       redirect: {
+//         destination: "/login",
+//         permanent: false,
+//       },
+//     };
+//   }
+
+// console.log("isAuthor", isAuthor);
+
+//   if (!isAuthor) {
+//     return {
+//       redirect: {
+//         destination: `/blog/${slug}`,
+//         permanent: true,
+//       },
+//     };
+//   }
+//   return {
+//     props: {
+//       data,
+//       isAuthor, 
+//     },
+//   };
+
+// };
+
+
+// const { createClient } = require('@supabase/supabase-js')
+
+// const supabase = createClient('https://your-project-url.supabase.co', 'your-anon-key')
+
+// const user = supabase.auth.user()
+
+// if (user) {
+//   // Render authenticated content
+//   res.send(`
+//     <button>Logout</button>
+//   `)
+// } else {
+//   // Render unauthenticated content
+//   res.send(`
+//     <button>Login</button>
+//   `)
+// }
 
 
 

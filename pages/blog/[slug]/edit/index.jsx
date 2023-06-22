@@ -1,4 +1,3 @@
-//pasted from row-level-security.md
 import { useRouter } from "next/router";
 import BlogEditor from "../../../../components/blog-editor";
 
@@ -8,22 +7,28 @@ import useSWRMutation from "swr/mutation";
 import { createSlug } from "../../../../utils/createSlug";
 import { editPost } from "../../../../api-routes/posts";
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
+import { useUser } from "@supabase/auth-helpers-react";
+
+
 
 export default function EditBlogPost() {
   const router = useRouter();
   /* Use this slug to fetch the post from the database */
+  const user = useUser();
   const { slug } = router.query;
   const {
     data: { data: post = {} } = {},
     error,
     isLoading,
   } = useSWR(slug ? `${postsCacheKey}${slug}` : null, () => getPost({ slug }));
+
   const { trigger: editPostTrigger } = useSWRMutation(
     `${postsCacheKey}${slug}`,
     editPost
   );
 
   const handleOnSubmit = async ({ editorContent, titleInput, image }) => {
+    
     const updatedSlug = createSlug(titleInput);
 
     const updatedPost = {
@@ -35,9 +40,8 @@ export default function EditBlogPost() {
     };
 
     const { data, error } = await editPostTrigger(updatedPost);
-    // console.log({ data, error });
+    console.log({ data, error });
   
-
   if (!error) {
     router.push(`/blog/${updatedSlug}`);
   }
@@ -46,10 +50,6 @@ export default function EditBlogPost() {
   if (isLoading) {
     return "...loading";
   }
-
-//   console.log("data:post", post); // Check the value of the `data` variable
-// console.log("error", error); // Check if there are any errors during data retrieval
-
 
   return (
     <BlogEditor
@@ -67,24 +67,27 @@ export default function EditBlogPost() {
 export const getServerSideProps = async (ctx) => {
   const supabase = createPagesServerClient(ctx);
   const { slug } = ctx.params;
-
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
-  console.log("session", session);
-
   
+  const {
+    data: { session }, error
+  } = await supabase.auth.getSession();
+  console.log("session1:", {session});
+  
+  const { data: { user } } = await supabase.auth.getUser();
+  console.log(user);
 
   const { data } = await supabase
     .from("posts")
-    .select()
+    .select("user_id")
     .single()
     .eq("slug", slug);
 
-
-  const isAuthor = data.user_id === session.user.id;
+    console.log("session:", session);
+    console.log( {data});
   
-      // Check if the user is authenticated
+    
+
+    // Check if the user is authenticated
   if (!session || !session.user || !session.user.id) {
     return {
       redirect: {
@@ -94,20 +97,36 @@ export const getServerSideProps = async (ctx) => {
     };
   }
 
-console.log("isAuthor", isAuthor);
+console.log("session:", { session });
+// console.log("isAuthor", isAuthor);
+
+const isAuthor = data.user_id === session?.user.id;
 
   if (!isAuthor) {
     return {
       redirect: {
         destination: `/blog/${slug}`,
         permanent: true,
-      },
+      }, 
     };
   }
+  
   return {
     props: {},
   };
+
 };
+
+
+
+
+
+
+
+
+
+
+
 
 // //kod från genomgång row-level-security.mdgå igenom om hitta bug i egna koden nedan
 

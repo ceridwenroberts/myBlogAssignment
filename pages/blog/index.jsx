@@ -7,12 +7,12 @@ import { getPosts, postsCacheKey } from "../../api-routes/posts";
 
 
 export default function Blog() {
-  const { data: { data = [] } = {}, error } = useSWR(postsCacheKey, getPosts);
-  // console.log("[slug]/index.js (single)Blog", { data });
+  const { data: { data: posts = [] } = {}, error } = useSWR(postsCacheKey, getPosts);
+  // console.log("[slug]/index.js (single)Blog", { posts });
   return (
     <section>
       <Heading>Blog</Heading>
-      {data?.map((post) => (
+      {posts?.map((post) => (
         <Link
           key={post.slug}
           className={styles.link}
@@ -26,7 +26,8 @@ export default function Blog() {
       ))}
     </section>
   );
-}
+};
+
 
 
 // const mockData = [
