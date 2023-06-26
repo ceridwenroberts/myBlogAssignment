@@ -1,18 +1,14 @@
 import { supabase } from "../lib/supabaseClient";
 
-console.log("supabase.storage", supabase.storage);
+// console.log("supabase.storage", supabase.storage);
 
 export const uploadImage = async (file) => {
-  console.log("file", file);
 
-  const fullFileName = file.name.split("."); //ger array of 2 - name and file format
-  console.log("fullFileName", fullFileName);
+  const fullFileName = file.name.split(".");
   const fileName = fullFileName[0];
   const fileExt = fullFileName[1];
 
   const filePath = `${fileName}-${Math.random()}.${fileExt}`;
-
-  console.log("filePath", filePath);
 
   const { data, error } = await supabase
   .storage
@@ -43,6 +39,4 @@ export const uploadImage = async (file) => {
     error: false,
     publicUrl,
   }
-  console.log(fileName, fileExt, filePath);
-  console.log( {data} );
 };
