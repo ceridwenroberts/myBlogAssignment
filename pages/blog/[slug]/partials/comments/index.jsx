@@ -17,7 +17,7 @@ export default function Comments({ postId }) {
     <div className={styles.container}>
       <h2>Comments</h2>
       {data.map((comment) => (
-        <Comment key={comment.id} {...comment} />
+        <Comment key={comment.id} post_id={comment.post_id} {...comment} />
       ))}
     </div>
   );
