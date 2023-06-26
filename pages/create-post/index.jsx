@@ -30,7 +30,6 @@ export default function CreatePost() {
 
   return (
     <>
-<input type="file" onChange={(e) => console.log(e.target.files[0])}  />
     <BlogEditor
       heading="Create post"
       onSubmit={handleOnSubmit}
