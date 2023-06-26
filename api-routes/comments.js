@@ -13,7 +13,6 @@ export const getComments = async (postId) => {
     return [];
   }
 
-  // console.log({data});
   return { data, error, status };
 };
 
