@@ -1,8 +1,6 @@
 # Blog Assignment
 
-Welcome to the final assignment! This repository serves as a starter kit for developing your own blog page, which could become part of your portfolio website.
-
-This task is intended to enhance your understanding of full-stack web development, focusing on aspects like database interaction, authentication, and CRUD (Create, Read, Update, Delete) operations. By the end of this assignment, you'll gain practical experience in managing relational data, structuring and querying a PostgreSQL database, and handling user authentication.
+The task is intended to enhance understanding of full-stack web development, focusing on aspects like database interaction, authentication, and CRUD (Create, Read, Update, Delete) operations. By the end of this assignment, you'll gain practical experience in managing relational data, structuring and querying a PostgreSQL database, and handling user authentication.
 
 ## Technologies
 
