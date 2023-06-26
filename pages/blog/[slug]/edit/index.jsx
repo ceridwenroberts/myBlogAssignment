@@ -1,19 +1,17 @@
 import { useRouter } from "next/router";
-import BlogEditor from "../../../../components/blog-editor";
+import { useUser } from "@supabase/auth-helpers-react";
+import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 
-import { getPost, postsCacheKey } from "@/api-routes/posts";
+import BlogEditor from "../../../../components/blog-editor";
 import useSWR from "swr";
 import useSWRMutation from "swr/mutation";
+
+import { getPost, postsCacheKey } from "@/api-routes/posts";
 import { createSlug } from "../../../../utils/createSlug";
 import { editPost } from "../../../../api-routes/posts";
-import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
-import { useUser } from "@supabase/auth-helpers-react";
-
-
 
 export default function EditBlogPost() {
   const router = useRouter();
-  /* Use this slug to fetch the post from the database */
   const user = useUser();
   const { slug } = router.query;
   const {
@@ -22,17 +20,13 @@ export default function EditBlogPost() {
     isLoading,
   } = useSWR(slug ? `${postsCacheKey}${slug}` : null, () => getPost({ slug }));
 
-  console.log({post});
-
   const { trigger: editPostTrigger } = useSWRMutation(
     `${postsCacheKey}${slug}/edit`,
     editPost
   );
 
-  const handleOnSubmit = async ({ editorContent, titleInput, image }) => {
-    
+const handleOnSubmit = async ({ editorContent, titleInput, image }) => {
     const updatedSlug = createSlug(titleInput);
-
     const updatedPost = {
       id: post.id,
       body: editorContent,
@@ -40,16 +34,12 @@ export default function EditBlogPost() {
       slug: updatedSlug,
       image
     };
-
     const { data, error } = await editPostTrigger(updatedPost);
-    console.log({ data, error });
   
-  if (!error) {
+    if (!error) {
     router.push(`/blog/${updatedSlug}`);
-  }
+    }
 };
-
-console.log({post})
 
   if (isLoading) {
     return "...loading";
@@ -75,10 +65,10 @@ export const getServerSideProps = async (ctx) => {
   const {
     data: { session }, error
   } = await supabase.auth.getSession();
-  console.log("session1:", {session});
+
   
   const { data: { user } } = await supabase.auth.getUser();
-  console.log(user);
+
 
   const { data } = await supabase
     .from("posts")
@@ -86,11 +76,6 @@ export const getServerSideProps = async (ctx) => {
     .single()
     .eq("slug", slug);
 
-    console.log("session:", session);
-    console.log( {data});
-  
-    
-    // Check if the user is authenticated
   if (!session || !session.user || !session.user.id) {
     return {
       redirect: {
@@ -99,9 +84,6 @@ export const getServerSideProps = async (ctx) => {
       },
     };
   }
-
-console.log("session:", { session });
-// console.log("isAuthor", isAuthor);
 
 const isAuthor = data.user_id === session.user.id;
 
@@ -117,7 +99,6 @@ const isAuthor = data.user_id === session.user.id;
   return {
     props: {},
   };
-
 };
 
 
