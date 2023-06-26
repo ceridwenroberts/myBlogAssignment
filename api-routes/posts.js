@@ -3,7 +3,6 @@ import { uploadImage } from "../utils/uploadImage";
 export const postsCacheKey = "api/blog";
 
 
-// to and from Supabase
 export const getPosts = async () => {
   const { data, error, status } = await supabase.from("posts").select();
 
@@ -22,14 +21,11 @@ export const getPost = async ({ slug }) => {
 
 export const addPost = async (_, { arg: newPost }) => {
   console.log("newPost i posts.js", newPost);
-  //Handle add post here
 
 
   let image = "";
   if (newPost?.image) {
-      //create fn takes uploaded image from client
-  //upload to bucket
-  //get pub url and return it
+
     const { publicUrl, error } = await uploadImage(newPost?.image);
 
     if (!error) {
@@ -41,19 +37,17 @@ export const addPost = async (_, { arg: newPost }) => {
 
   const { data, error, status } = await supabase
     .from("posts")
-    // .insert({ title, slug, body })
     .insert({ ...newPost, image })
     .single()
     .select();
-  // console.log( "post status", { status }, { error } );
+ 
   return { data, error, status };
 };
 
 export const editPost = async (_, { arg: updatedPost }) => {
-  // console.log("arg posts.js/editPost", {arg});
   let image = updatedPost?.image ?? "";
 
-  const isNewImage = typeof image === "object" && image !== null; // vad var dillen med image (url?) som object?
+  const isNewImage = typeof image === "object" && image !== null; 
 
   if (isNewImage) {
     const { publicUrl, error } = await uploadImage(updatedPost.image);
@@ -94,7 +88,6 @@ export const deletePost = async (_, { arg: { slug, id } }) => {
     .single();
   console.log("deletePost", data);
   if (data) {
-    console.log("there is data", data);
     return {
       redirect: {
         destination: "/blog",
@@ -102,5 +95,5 @@ export const deletePost = async (_, { arg: { slug, id } }) => {
       },
     };
   }
-  // return { data, error, status };
+  return { error, status };
 };
