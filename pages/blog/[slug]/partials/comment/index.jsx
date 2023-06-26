@@ -3,26 +3,11 @@ import useSWRMutation from "swr/mutation";
 import Button from "@components/button";
 import styles from "./comment.module.css";
 import { commentsCacheKey, deleteComment } from "../../../../../api-routes/comments";
-import { GetStaticProps } from "next";
 
-// export default function Comment({ comments, comment, createdAt, author, id, post_id }) {
-  export default function Comment(props) {
+export default function Comment({ comments, comment, createdAt, author, id, post_id }) {
   const user = useUser();
-  console.log({user});
-
-  console.log(props);
-  console.log(props.post_id);
-  // console.log(props.post_id.user_id);
-  
-  // const postAuthor = post_id?.user_id;
-  // const isAuthor = user?.id === postAuthor;
-//   console.log({postAuthor});
-// console.log("post_id.user_id:", post_id.user_id);
-
-// console.log({user});
-// // console.log(post);
-// console.log(user_Id);
-
+  const postAuthor = post_id.user_id;
+  const isAuthor = user?.id === postAuthor;
 
   const { trigger: deleteCommentTrigger, isMutating } = useSWRMutation(commentsCacheKey, deleteComment, {
     onError: (error) => {
@@ -35,18 +20,17 @@ import { GetStaticProps } from "next";
   };
 
   return (
-    <div>Nothing</div>
-    // <div className={styles.container}>
-    //   <p>{comment}</p>
-    //   <p className={styles.author}>{author}</p>
-    //   <time className={styles.date}>{createdAt}</time>
+    <div className={styles.container}>
+      <p>{comment}</p>
+      <p className={styles.author}>{author}</p>
+      <time className={styles.date}>{createdAt}</time>
 
 
-    //   <div className={styles.buttonContainer}>
-    //     {isAuthor &&
-    //       <Button onClick={handleDeleteComment}>Delete</Button>
-    //     }
-    //   </div>
-    // </div>
+      <div className={styles.buttonContainer}>
+        {isAuthor &&
+          <Button onClick={handleDeleteComment}>Delete</Button>
+        }
+      </div>
+    </div>
   );
 }
