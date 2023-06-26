@@ -6,17 +6,15 @@ import TextArea from "@components/text-area";
 import styles from "./add-comment.module.css";
 import useSWRMutation from "swr/mutation";
 import { addComment, commentsCacheKey } from "../../../../../api-routes/comments";
-import {getStaticProps} from "pages/blog/[slug]/edit/index.jsx"
+import { getStaticProps } from "pages/blog/[slug]/edit/index.jsx"
 
 export default function AddComment({ postId }) {
-  const formRef = useRef(); // create a reference
-  
-  const { trigger: addCommentTrigger, isMutating }  = useSWRMutation(commentsCacheKey, addComment, {
+  const formRef = useRef();
+  const { trigger: addCommentTrigger, isMutating } = useSWRMutation(commentsCacheKey, addComment, {
     onError: (error) => {
       console.log(error);
     }
-  }
-  );
+  });
 
   const handleOnSubmit = async (event) => {
     event.preventDefault();
@@ -29,13 +27,7 @@ export default function AddComment({ postId }) {
       post_id: postId
     }
 
-    console.log({ author, comment, postId });
-
     const { status, error } = await addCommentTrigger(newComment);
-
-    console.log({status, error});
-
-    // Reset the form after submission?
     formRef.current.reset();
   };
 
@@ -47,12 +39,10 @@ export default function AddComment({ postId }) {
           <Label htmlFor="author">Author</Label>
           <Input id="author" name="author" />
         </div>
-
         <div className={styles.inputContainer}>
           <Label htmlFor="comment">Comment</Label>
           <TextArea id="comment" name="comment" />
         </div>
-
         <Button className={styles.addCommentButton} type="submit">
           Submit
         </Button>
