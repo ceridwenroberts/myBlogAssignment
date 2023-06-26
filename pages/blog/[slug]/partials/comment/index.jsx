@@ -12,7 +12,7 @@ import { GetStaticProps } from "next";
 
   console.log(props);
   console.log(props.post_id);
-  console.log(props.post_id.user_id);
+  // console.log(props.post_id.user_id);
   
   // const postAuthor = post_id?.user_id;
   // const isAuthor = user?.id === postAuthor;
