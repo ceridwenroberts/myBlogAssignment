@@ -16,7 +16,6 @@ const ImageUpload = ({ onImageUpload, onReset, src, className }) => {
   });
   const hiddenImageInputRef = useRef(null);
 
-  // Update the previewUrl whenever the src prop is updated
   useEffect(() => {
     if (src) {
       if (typeof src === "string") {
