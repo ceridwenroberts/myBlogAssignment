@@ -6,8 +6,8 @@ import { commentsCacheKey, deleteComment } from "../../../../../api-routes/comme
 
 export default function Comment({ comments, comment, createdAt, author, id, post_id }) {
   const user = useUser();
-  // const postAuthor = post_id.user_id;
-  // const isAuthor = user?.id === postAuthor;
+  const postAuthor = post_id?.user_id;
+  const isAuthor = user?.id === postAuthor;
 
   const { trigger: deleteCommentTrigger, isMutating } = useSWRMutation(commentsCacheKey, deleteComment, {
     onError: (error) => {
@@ -27,9 +27,9 @@ export default function Comment({ comments, comment, createdAt, author, id, post
 
 
       <div className={styles.buttonContainer}>
-        {/* {isAuthor && */}
+        {isAuthor &&
           <Button onClick={handleDeleteComment}>Delete</Button>
-        {/* } */}
+        }
       </div>
     </div>
   );
