@@ -7,7 +7,7 @@ export default function Home() {
   return <>
   <Heading>Home</Heading>
   <div>
-      <h1>Welcome to my app</h1>
+      <h1>Welcome to an åsöm blog</h1>
       {user ? (
         <p> Welcome. Your contact email is {user.email}</p>
       ) : (<>
